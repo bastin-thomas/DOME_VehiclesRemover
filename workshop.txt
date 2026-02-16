@@ -1,6 +1,6 @@
-version=1.1
+version=1
 id=3667271122
-title=DOME - Vehicles Remover
-description=This mod remove all the Vehicles we want for the D.O.M.E. Server
+title=DOME - Custom Spawn Management System
+description=This mod remove all Vehicles, Zombies, Zombies' Items spawn we want for the D.O.M.E. Server
 tags=Build 41;Balance;Vehicles
 visibility=public
