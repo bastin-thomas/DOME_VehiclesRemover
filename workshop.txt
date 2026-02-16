@@ -1,0 +1,5 @@
+version=1
+title=DOME - Vehicles Remover
+description=This mod remove all the Vehicles we want for the D.O.M.E. Server
+tags=
+visibility=public

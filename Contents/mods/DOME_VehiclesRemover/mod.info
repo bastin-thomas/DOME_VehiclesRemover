@@ -1,0 +1,5 @@
+name=DOME - Vehicles Remover
+poster=poster.png
+id=DOME_VehicleRemover
+description=This mod remove all the Vehicles we want for the D.O.M.E. Server
+require=RS_WaterCistern,NoVanillaVehicles
