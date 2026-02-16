@@ -1,12 +1,20 @@
 if VehicleZoneDistribution then -- check if the table exists for backwards compatibility
 
+
+---Utils function to make sure the vehicle list is properly loaded
+---@param zone table Zone to be loaded
+---@return table
 local InitVehicleZoneDistribution = function (zone) --little functions to be sure that each table exists
     zone = zone or {};
     zone.vehicles = zone.vehicles or {}
     return zone;
 end
 
-local function printableValue(value)
+
+---Utils function to properly serialize a value in lua
+---@param value any
+---@return string
+local function strValue(value)
     local ok, str = pcall(tostring, value)
     if ok then
         return str;
@@ -27,8 +35,8 @@ function PrintVehicleDistribution(withZoneStats)
         for vehicleName, vehicle in pairs(zone.vehicles) do
             if(vehicle ~=nil)then 
                 print("         "..vehicleName.." {")
-                print("                 index: "..printableValue(vehicle.index))
-                print("                 spawnChance: "..printableValue(vehicle.spawnChance))
+                print("                 index: "..strValue(vehicle.index))
+                print("                 spawnChance: "..strValue(vehicle.spawnChance))
                 print("         }")
             else 
                 print("         "..vehicleName.." {\n".."nil".."\n}")
@@ -53,7 +61,7 @@ function PrintVehicleDistribution(withZoneStats)
 
             for zoneDataName, zoneDatavalue in pairs(zone) do
                 if(zoneDataName ~= "vehicles")then
-                    print("         "..zoneDataName..": "..printableValue(zoneDatavalue))
+                    print("         "..zoneDataName..": "..strValue(zoneDatavalue))
                 end
             end
         end
@@ -62,13 +70,21 @@ function PrintVehicleDistribution(withZoneStats)
     end
 end
 
+--- HOW TO USE:
+-- First add this InitVehicleZoneDistribution to be sure all the table are loaded:
+-- VehicleZoneDistribution.yourTable = InitVehicleZoneDistribution(VehicleZoneDistribution.yourTable);
+
+-- Now add any line for the vehicles you want to add or remove from spawning list:
+-- VehicleZoneDistribution.parkingstall.vehicles["Base.f700water"] = nil;   -- DELETE vehicle from list
+-- VehicleZoneDistribution.parkingstall.vehicles["Base.f700water"] = {index = -1, spawnChance = 0.20}; --ADD vehicle from list
+
 
 -- Parking Stall, common parking stall with random cars, the most used one (shop parking lots, houses etc.)
 VehicleZoneDistribution.parkingstall = InitVehicleZoneDistribution(VehicleZoneDistribution.parkingstall);
 VehicleZoneDistribution.parkingstall.vehicles["Base.f700water"] = nil;
 VehicleZoneDistribution.parkingstall.vehicles["Base.f700vacuum"] = nil;
 VehicleZoneDistribution.parkingstall.vehicles["Base.TrailerKbacRSWater"] = nil;
-VehicleZoneDistribution.parkingstall.vehicles["test"] = nil;
+
 
 
 VehicleZoneDistribution.trailerpark = InitVehicleZoneDistribution(VehicleZoneDistribution.trailerpark);
@@ -149,6 +165,7 @@ VehicleZoneDistribution.mccoy.vehicles["Base.VanSpecial"] = nil;
 -- fossoil
 VehicleZoneDistribution.fossoil = InitVehicleZoneDistribution(VehicleZoneDistribution.fossoil);
 VehicleZoneDistribution.fossoil.vehicles["Base.PickUpVanLight"] = nil;
+VehicleZoneDistribution.fossoil.vehicles["Base.PickUpVanLights"] = nil;
 VehicleZoneDistribution.fossoil.vehicles["Base.PickUpTruckLights"] = nil;
 
 
