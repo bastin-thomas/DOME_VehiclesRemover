@@ -1,0 +1,8 @@
+{
+    "Lua.diagnostics.globals": [
+        "dome_remover_utils"
+    ],
+    "Lua.diagnostics.disable": [
+        "missing-parameter"
+    ]
+}
