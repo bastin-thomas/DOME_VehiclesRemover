@@ -2,13 +2,16 @@
 require 'NPCs/ZombiesZoneDefinition'
 require 'DomeRemoverUtils'
 
---Put Global the functions (shortcuts)
-PrintZombieDistribution = DomeRemoverUtils.PrintZombieDistribution;
 --Put Local all used functions
 local RemoveZombies = DomeRemoverUtils.OptimizedRemoveZombies;
 
 
 ZombiesZoneDefinition = ZombiesZoneDefinition or {}
+
+if isDebugEnabled and isDebugEnabled() then
+    print("Before DOME Zombie Spawn Removal")
+    PrintZombieDistribution()
+end
 
 -- *********************************************
 --
@@ -41,26 +44,20 @@ ZombiesZoneDefinition.SpikesPoP_Zombies = nil;
 
 -- Removes all MonMouth Zombies that have been added to default.
 local MonMouthDefaultRemovalList = {
-    Monmouth_JennyShakes_Zombie = nil,
-    Monmouth_HelloKittenZombie = nil,
-    Monmouth_Amelora_Zombie = nil,
-    Monmouth_YebManRadio = nil,
-    Monmouth_NakAttack = nil,
-    Monmouth_UnknownHost = nil,
-    Monmouth_Spike = nil,
-    Monmouth_Toddy = nil,
-    Monmouth_Art_the_Clown = nil,
+    Monmouth_JennyShakes_Zombie = true,
+    Monmouth_HelloKittenZombie = true,
+    Monmouth_Amelora_Zombie = true,
+    Monmouth_YebManRadio = true,
+    Monmouth_NakAttack = true,
+    Monmouth_UnknownHost = true,
+    Monmouth_Spike = true,
+    Monmouth_Toddy = true,
+    Monmouth_Art_the_Clown = true,
 }
-ZombiesZoneDefinition.Default = RemoveZombies(ZombiesZoneDefinition.Default, MonMouthDefaultRemovalList);
+RemoveZombies(ZombiesZoneDefinition.Default, MonMouthDefaultRemovalList);
 
--- Removes all MonMouth Zombies that have been added to spiffo.
-local MonMouthSpiffoRemovalList = {
-    Monmouth_Art_the_Clown = nil,
-}
-ZombiesZoneDefinition.Spiffo = RemoveZombies(ZombiesZoneDefinition.Spiffo, MonMouthSpiffoRemovalList);
-
-
-
+-- Very specific case with a mixed table with value at end. should remove from spifo table wrongn data
+DomeRemoverUtils.RemoveLastMixedTable(ZombiesZoneDefinition.Spiffo);
 
 
 -- *********************************************
@@ -75,12 +72,16 @@ ZombiesZoneDefinition.Spiffo = RemoveZombies(ZombiesZoneDefinition.Spiffo, MonMo
 --       to Remove a custom zone from modders:
 --       ZombiesZoneDefinition.youcustomzone = nil;
 --
--- 2) Adding zombies to existing zones.
+-- 2) Adding zombies to existing zones. (if a zone is already made in the file please use it for optimization purpouses)
 -- to remove zombies from existing zones (vanilla, or if you don't want to remove all of themm):
 -- local MyRemovalList = {
---     "MyZombieName1",
---     "MyZombieName2",
---     "MyZombieName3",
---     "MyZombieName4",
+--     MyZombieType1 = nil,
+--     MyZombieType2 = nil,
 -- }
 -- ZombiesZoneDefinition.nameOfTable = OptimizedRemove(ZombiesZoneDefinition.nameOfTable, MyRemovalList);
+
+
+if isDebugEnabled and isDebugEnabled() then
+    print("After DOME Zombie Spawn Removal")
+    PrintZombieDistribution()
+end

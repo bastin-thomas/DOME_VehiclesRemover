@@ -1,5 +1,6 @@
 require 'NPCs/ZombiesZoneDefinition'
-require 'VehicleZoneDistribution'
+require 'Definitions/AttachedWeaponDefinitions'
+
 
 DomeRemoverUtils = {};  -- This Library have been made to store Utils Functions for Master Removal Tool
 
@@ -12,7 +13,7 @@ DomeRemoverUtils = {};  -- This Library have been made to store Utils Functions 
 ---Utils function to properly serialize a value in lua
 ---@param value any
 ---@return string
-function DomeRemoverUtils:strValue(value)
+function DomeRemoverUtils.strValue(value)
     local ok, str = pcall(tostring, value)
     if ok then
         return str;
@@ -21,57 +22,125 @@ function DomeRemoverUtils:strValue(value)
     end
 end;
 
+
+---An Optimized Utils Function to remove one row from a table
+---@param tbl table -- e.g., AttachedWeaponDefinitions["name"].weapons
+---@param value any -- any value in the row thaat match to be deleted to delete
+function DomeRemoverUtils.RemoveFromArray(tbl, value)
+    for i = #tbl, 1, -1 do
+        if tbl[i] == value then
+            table.remove(tbl, i);
+        end
+    end
+end
+
+
+---An Optimized Utils Function to remove multiple rows from a table
+---@param tbl table -- e.g., AttachedWeaponDefinitions["name"].weapons
+---@param toRemoveSet table -- any value in the row thaat match to be deleted to delete
+function DomeRemoverUtils.RemoveMultipleFromArray(tbl, toRemoveSet)
+    if type(tbl) ~= "table" or type(toRemoveSet) ~= "table" then return end
+
+    for i = #tbl, 1, -1 do
+        if toRemoveSet[tbl[i]] then
+            table.remove(tbl, i)
+        end
+    end
+end
+
+
+
+-- *********************************************
+--
+-- Zombies Items Utils
+--
+-- *********************************************
+
+--- Print the current Zombies Distribution on the server
+function PrintZombieItemsDistribution()
+    DomeRemoverUtils.PrintTableRecursive(AttachedWeaponDefinitions);
+end;
+
+function DomeRemoverUtils.PrintTableRecursive(tbl, indent)
+    indent = indent or 0
+    local prefix = string.rep("    ", indent)
+
+    if type(tbl) ~= "table" then
+        print(prefix .. DomeRemoverUtils.strValue(tbl) .. ",")
+        return
+    end
+
+    for key, value in pairs(tbl) do
+        if type(value) == "table" then
+            print(prefix .. tostring(key) .. " {")
+            DomeRemoverUtils.PrintTableRecursive(value, indent + 1)
+            print(prefix .. "},")
+        else
+            print(prefix .. tostring(key) .. ": " .. DomeRemoverUtils.strValue(value) .. ",")
+        end
+    end
+end
+
+
+
+
+
+
 -- *********************************************
 --
 -- Zombies Utils
 --
 -- *********************************************
 
----Utils function to properly serialize a value in lua
 
 ---An Optimized Utils Function to remove multiple rows from a table
 ---@param tbl table -- e.g., ZombiesZoneDefinition.Default
 ---@param namesToRemove table -- keys are zombie names, values = true
----@return table
-function DomeRemoverUtils:OptimizedRemoveZombies(tbl, namesToRemove)
+function DomeRemoverUtils.OptimizedRemoveZombies(tbl, namesToRemove)
     tbl = tbl or {};
-    if not namesToRemove then return tbl; end
+    if namesToRemove == nil then return end
+    for i, value in ipairs(tbl) do
+        for nameToRemove, value2 in pairs(namesToRemove) do
+            if(type(value) == "table" and tbl[i].name == nameToRemove)then
+                tbl[i] = nil;
+                break;
+            end
+        end
+    end
+end;
 
-    for i = #tbl, 1, -1 do  -- iterate backwards to avoid skipping
-        local Zmbzone = tbl[i]
-        if Zmbzone and namesToRemove[Zmbzone.name] then
-            table.remove(tbl, i)
+
+---Remove the "last" element from a table (numeric or mixed)
+---@param tbl table
+function DomeRemoverUtils.RemoveLastMixedTable(tbl)
+    if type(tbl) ~= "table" then return end
+
+    local maxIndex = 0
+    for k, _ in pairs(tbl) do
+        if type(k) == "number" and k > maxIndex then
+            maxIndex = k
         end
     end
 
-    return tbl;
-end;
-
+    if maxIndex > 0 then
+        tbl[maxIndex] = nil
+    else
+        -- No numeric keys found, remove a random key? Optional:
+        local lastKey
+        for k in pairs(tbl) do lastKey = k end
+        if lastKey ~= nil then
+            tbl[lastKey] = nil
+        end
+    end
+end
 
 
 --- Print the current Zombies Distribution on the server
-function DomeRemoverUtils:PrintZombieDistribution()
-    for zoneName, Zmbzone in pairs(ZombiesZoneDefinition) do
-
-        if(Zmbzone ~= nil and type(Zmbzone) == "table") then
-            print(zoneName .. "{")
-            for zombieName, zombie in pairs(Zmbzone) do
-                if (zombie ~= nil) and type(zombie) == "table" then
-                    print("         " .. zombieName .. " {")
-                    for key, value in pairs(zombie) do
-                        print("                 " .. key .. ": " .. DomeRemoverUtils:strValue(value)..",")
-                    end
-                    print("         }")
-                else
-                    print("         " .. zombieName .. ": " .. DomeRemoverUtils:strValue(zombie)..",")
-                end
-            end
-            print("},")
-        else    
-            print("                 " .. "<Unkown Key>" .. ": " .. DomeRemoverUtils:strValue(Zmbzone)..",");  
-        end;        
-    end
+function PrintZombieDistribution()
+    DomeRemoverUtils.PrintTableRecursive(ZombiesZoneDefinition);
 end;
+
+
 
 -- *********************************************
 --
@@ -83,7 +152,7 @@ end;
 ---Utils function to make sure the vehicle list is properly loaded
 ---@param zone table Zone to be loaded
 ---@return table
-function DomeRemoverUtils:InitVehicleZoneDistribution(zone)      --little functions to be sure that each table exists
+function DomeRemoverUtils.InitVehicleZoneDistribution(zone)      --little functions to be sure that each table exists
     zone = zone or {};
     zone.vehicles = zone.vehicles or {}
     return zone;
@@ -91,7 +160,7 @@ end;
 
 --- Print the current Vehicle Distribution on the server
 --- @param withZoneStats boolean show zone statistics + Vehicle Distribution
-function DomeRemoverUtils:PrintVehicleDistribution(withZoneStats)
+function PrintVehicleDistribution(withZoneStats)
     withZoneStats = withZoneStats or false;
 
     for zoneName, zone in pairs(VehicleZoneDistribution) do
@@ -101,8 +170,8 @@ function DomeRemoverUtils:PrintVehicleDistribution(withZoneStats)
         for vehicleName, vehicle in pairs(zone.vehicles) do
             if (vehicle ~= nil) then
                 print("         " .. vehicleName .. " {")
-                print("                 index: " .. DomeRemoverUtils:strValue(vehicle.index)..",")
-                print("                 spawnChance: " .. DomeRemoverUtils:strValue(vehicle.spawnChance)..",")
+                print("                 index: " .. DomeRemoverUtils.strValue(vehicle.index)..",")
+                print("                 spawnChance: " .. DomeRemoverUtils.strValue(vehicle.spawnChance)..",")
                 print("         }")
             else
                 print("         " .. vehicleName .. " {\n" .. "nil" .. "\n}"..",")
@@ -127,7 +196,7 @@ function DomeRemoverUtils:PrintVehicleDistribution(withZoneStats)
 
             for zoneDataName, zoneDatavalue in pairs(zone) do
                 if (zoneDataName ~= "vehicles") then
-                    print("         " .. zoneDataName .. ": " .. DomeRemoverUtils:strValue(zoneDatavalue)..",")
+                    print("         " .. zoneDataName .. ": " .. DomeRemoverUtils.strValue(zoneDatavalue)..",")
                 end
             end
         end

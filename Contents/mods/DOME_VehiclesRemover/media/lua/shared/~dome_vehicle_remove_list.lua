@@ -1,12 +1,23 @@
 require 'VehicleZoneDistribution'
 require 'DomeRemoverUtils'
 
---Put Global the functions (shortcuts)
-PrintVehicleDistribution = DomeRemoverUtils.PrintVehicleDistribution;
 --Optimized local of the global function 
 local InitVehicleZoneDistribution = DomeRemoverUtils.InitVehicleZoneDistribution;
 
 VehicleZoneDistribution = VehicleZoneDistribution or {}
+
+
+if isDebugEnabled and isDebugEnabled() then
+    print("Before DOME Vehicle Spawn Removal")
+    PrintVehicleDistribution()
+end
+
+
+-- ****************************************************
+--
+-- ALL MODS REMOVAL LIST:
+--
+-- ****************************************************
 
 --- HOW TO USE:
 -- First add this InitVehicleZoneDistribution to be sure all the table are loaded:
@@ -32,10 +43,13 @@ VehicleZoneDistribution.trailerpark.vehicles["Base.m50water"] = nil;
 
 
 VehicleZoneDistribution.bad = InitVehicleZoneDistribution(VehicleZoneDistribution.bad);
--- bad vehicles, moslty used in poor area, sometimes around pub etc.
 VehicleZoneDistribution.bad.vehicles["Base.f700water"] = nil;
 VehicleZoneDistribution.bad.vehicles["Base.TrailerKbacRSWater"] = nil;
 VehicleZoneDistribution.bad.vehicles["Base.f700vacuum"] = nil;
+VehicleZoneDistribution.bad.vehicles["Base.PickUpVanLightsFire"] = nil;
+
+VehicleZoneDistribution.medium = InitVehicleZoneDistribution(VehicleZoneDistribution.bad);
+VehicleZoneDistribution.medium.vehicles["Base.PickUpVanLightsFire"] = nil;
 
 VehicleZoneDistribution.junkyard = InitVehicleZoneDistribution(VehicleZoneDistribution.junkyard);
 VehicleZoneDistribution.junkyard.vehicles["Base.f700water"] = nil;
@@ -68,6 +82,7 @@ VehicleZoneDistribution.trafficjams.vehicles["Base.m50water"] = nil;
 
 VehicleZoneDistribution.fire = InitVehicleZoneDistribution(VehicleZoneDistribution.fire);
 VehicleZoneDistribution.fire.vehicles["Base.f700water"] = nil;
+VehicleZoneDistribution.fire.vehicles["Base.PickUpVanLightsFire"] = nil;
 
 VehicleZoneDistribution.ranger = InitVehicleZoneDistribution(VehicleZoneDistribution.ranger);
 VehicleZoneDistribution.ranger.vehicles["Base.f700vacuum"] = nil;
@@ -96,6 +111,7 @@ VehicleZoneDistribution.farm.vehicles["Base.f700vacuum"] = nil;
 VehicleZoneDistribution.farm.vehicles["Base.m50water"] = nil;
 
 
-
-
-
+if isDebugEnabled and isDebugEnabled() then
+    print("After DOME Vehicle Spawn Removal")
+    PrintVehicleDistribution()
+end

@@ -1,6 +1,7 @@
 {
     "Lua.diagnostics.globals": [
-        "dome_remover_utils"
+        "dome_remover_utils",
+        "AttachedWeaponDefinitions"
     ],
     "Lua.diagnostics.disable": [
         "missing-parameter"
